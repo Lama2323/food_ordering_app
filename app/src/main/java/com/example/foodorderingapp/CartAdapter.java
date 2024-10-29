@@ -47,8 +47,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         Glide.with(context)
                 .load(cartItem.getImage_source())
-                .placeholder(R.drawable.placeholder) // Placeholder image if loading fails
-                .error(R.drawable.error) // Error image if loading fails
+                .placeholder(R.drawable.ic_placeholder) // Placeholder image if loading fails
+                .error(R.drawable.ic_error) // Error image if loading fails
                 .into(holder.productImageView);
 
         holder.productName.setText(cartItem.getName());
