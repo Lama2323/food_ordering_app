@@ -1,5 +1,6 @@
 package com.example.foodorderingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -20,6 +21,9 @@ public class HomeActivity extends AppCompatActivity {
         Backendless.initApp( getApplicationContext(),
                 Environment.APPLICATION_ID,
                 Environment.API_KEY );
+
+        Intent intent = new Intent(this, CartActivity.class);
+        startActivity(intent);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
