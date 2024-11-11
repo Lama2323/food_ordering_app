@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity">
+
+
+    <LinearLayout
+        android:id="@+id/register_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/txt_RegisterEmailAddress"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="100dp"
+            android:ems="10"
+            android:hint="Nhập địa chỉ email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/txt_RegisterPassword"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="25dp"
+            android:ems="10"
+            android:hint="Nhập mật khẩu"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/txt_RegisterReEnterPassword"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="25dp"
+            android:ems="10"
+            android:hint="Hãy nhập lại mật khẩu"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btn_RegisterUser"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="110dp"
+            android:layout_marginTop="15dp"
+            android:text="Đăng ký" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
