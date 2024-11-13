@@ -1,5 +1,6 @@
 package com.example.foodorderingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -17,6 +18,7 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 import com.example.foodorderingapp.classes.Cart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnCartClickListener {
@@ -26,6 +28,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private List<Cart> cartList;
     private TextView totalPriceSelectedTextView;
     private Button checkoutButton;
+    private int totalPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,21 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         checkoutButton = findViewById(R.id.button_checkout);
 
         checkoutButton.setOnClickListener(v -> {
-            Toast.makeText(CartActivity.this, "Thanh toán", Toast.LENGTH_SHORT).show(); // tạm thời
+            List<Cart> selectedCartItems = new ArrayList<>();
+            for(Cart item : cartList) {
+                if(item.isChecked()) {
+                    selectedCartItems.add(item);
+                }
+            }
+
+            if (selectedCartItems.isEmpty()) {
+                Toast.makeText(CartActivity.this, "Hãy chọn món hàng cần thanh toán", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent checkoutIntent = new Intent(CartActivity.this, CheckOutActivity.class);
+                checkoutIntent.putExtra("selectedCartItems", new ArrayList<>(selectedCartItems));
+                checkoutIntent.putExtra("totalPrice", totalPrice);
+                startActivity(checkoutIntent);
+            }
         });
 
         calculateTotalPriceSelected();
@@ -79,7 +96,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 Backendless.Data.of(Cart.class).remove(cartItemToDelete, new AsyncCallback<Long>() {
                     @Override
                     public void handleResponse(Long response) {
-                        // Remove the item from the adapter's list and update the RecyclerView
                         cartList.remove(position);
                         cartAdapter.notifyItemRemoved(position);
                         Toast.makeText(CartActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
@@ -106,16 +122,16 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     }
 
     private void calculateTotalPriceSelected() {
-        int totalPrice = 0;
+        this.totalPrice = 0;
 
         if (cartList != null) {
             for (Cart cartItem : cartList) {
                 if (cartItem.isChecked()) {
-                    totalPrice += cartItem.getTotal_price();
+                    this.totalPrice += cartItem.getTotal_price();
                 }
             }
         }
 
-        totalPriceSelectedTextView.setText("Tổng tiền: " + totalPrice);
+        totalPriceSelectedTextView.setText("Tổng tiền: " + this.totalPrice);
     }
 }

@@ -3,8 +3,11 @@ package com.example.foodorderingapp.classes;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import java.io.Serializable;
 
-public class Cart {
+public class Cart implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String image_source;
     private String name;
     private int price;
