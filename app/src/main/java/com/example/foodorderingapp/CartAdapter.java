@@ -46,34 +46,46 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         Cart cartItem = cartList.get(position);
 
-        Glide.with(context)
-                .load(cartItem.getImage_source())
-                .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_error)
-                .into(holder.productImageView);
+        // Handle image loading with null/empty check
+        String imageUrl = cartItem.getImage_source();
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            // Use ic_food as default image
+            holder.productImageView.setImageResource(R.drawable.ic_food);
+        } else {
+            // Load image from URL using Glide
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_food)  // Use ic_food as error image as well
+                    .into(holder.productImageView);
+        }
 
+        // Set text values
         holder.productName.setText(cartItem.getName());
         holder.quantity.setText("Số lượng: " + cartItem.getQuantity());
         holder.total.setText("Tổng tiền: " + cartItem.getTotal_price());
+
+        // Set tag and checkbox state
         holder.itemView.setTag(cartItem.getObjectId());
         holder.checkBox.setChecked(cartItem.isChecked());
 
-        // Set click listeners
+        // Set click listener for delete button
         holder.deleteButton.setOnClickListener(v -> {
-            if (listener != null) {
+            if (listener != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                 listener.onDeleteClick(holder.getAdapterPosition());
             }
         });
 
+        // Set click listener for checkbox
         holder.checkBox.setOnClickListener(v -> {
-            if (listener != null) {
+            if (listener != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                 listener.onCheckboxClick(holder.getAdapterPosition(), holder.checkBox.isChecked());
             }
         });
 
-        // Add click listener for the whole item
+        // Set click listener for the whole item
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
+            if (listener != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                 listener.onItemClick(holder.getAdapterPosition());
             }
         });
@@ -81,7 +93,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public int getItemCount() {
-        return cartList.size();
+        return cartList != null ? cartList.size() : 0;
     }
 
     public void updateCartList(List<Cart> newCartList) {
