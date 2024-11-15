@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Cart"
+            android:text="Giỏ hàng"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -73,35 +73,4 @@
             android:text="Thanh toán" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/nav_button_1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_profile" />
-
-        <ImageView
-            android:id="@+id/nav_button_2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_home" />
-
-        <ImageView
-            android:id="@+id/nav_button_3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_cart" />
-    </LinearLayout>
-
 </LinearLayout>

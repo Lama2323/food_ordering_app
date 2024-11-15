@@ -147,23 +147,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHECKOUT_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Refresh the cart data
-                retrieveCartData();
-                Toast.makeText(this, "Đơn hàng đã được xác nhận thành công!", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == CART_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
-            Cart updatedItem = (Cart) data.getSerializableExtra("updatedCartItem");
-            if (updatedItem != null) {
-                // Cập nhật item trong cartList
-                for (int i = 0; i < cartList.size(); i++) {
-                    if (cartList.get(i).getObjectId().equals(updatedItem.getObjectId())) {
-                        cartList.set(i, updatedItem);
-                        cartAdapter.notifyItemChanged(i);
-                        break;
-                    }
-                }
+        if (requestCode == CHECKOUT_REQUEST_CODE && resultCode == RESULT_OK) {
+            ArrayList<String> deletedItems = data.getStringArrayListExtra("deletedItems");
+            if (deletedItems != null && !deletedItems.isEmpty()) {
+                // Xóa các items đã thanh toán khỏi cartList
+                cartList.removeIf(cartItem ->
+                        deletedItems.contains(cartItem.getObjectId())
+                );
+                cartAdapter.notifyDataSetChanged();
                 calculateTotalPriceSelected();
             }
         }

@@ -1,76 +1,101 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Bọc toàn bộ layout hiện tại trong một FrameLayout -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
+    <!-- Layout gốc của bạn -->
     <LinearLayout
-        android:id="@+id/app_bar_checkout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/button_back_checkout"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:clickable="true"
-            android:contentDescription="Back"
-            android:src="@drawable/ic_back"/>
+        <LinearLayout
+            android:id="@+id/app_bar_checkout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <ImageButton
+                android:id="@+id/button_back_checkout"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:clickable="true"
+                android:contentDescription="Back"
+                android:src="@drawable/ic_back"/>
+
+            <TextView
+                android:id="@+id/title_checkout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Thanh toán"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="58dp"
+                android:layout_height="58dp"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/checkout_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/title_checkout"
-            android:layout_width="0dp"
+            android:id="@+id/total_price_checkout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Checkout"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:padding="16dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Tổng tiền "
+            android:textAlignment="textEnd"  />
 
-        <View
-            android:layout_width="58dp"
-            android:layout_height="58dp"/>
+        <EditText
+            android:id="@+id/delivery_phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số điện thoại"
+            android:padding="16dp"
+            android:inputType="phone" /> <!-- Sửa lại inputType thành phone -->
+
+        <EditText
+            android:id="@+id/delivery_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Địa chỉ giao hàng"
+            android:padding="16dp"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/confirm_order_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Xác nhận"
+            android:layout_margin="16dp" />
 
     </LinearLayout>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/checkout_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <TextView
-        android:id="@+id/total_price_checkout"
-        android:layout_width="match_parent"
+    <!-- ProgressBar được đặt phía trên cùng, ở giữa màn hình -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:text="Tổng tiền "
-        android:textAlignment="textEnd"  />
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:elevation="10dp" />
 
-    <EditText
-        android:id="@+id/delivery_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Địa chỉ giao hàng"
-        android:padding="16dp"
-        android:inputType="textMultiLine" />
-
-    <Button
-        android:id="@+id/confirm_order_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Xác nhận"
-        android:layout_margin="16dp" />
-
-</LinearLayout>
+</FrameLayout>
