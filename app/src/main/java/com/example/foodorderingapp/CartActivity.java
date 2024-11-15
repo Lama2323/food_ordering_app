@@ -29,6 +29,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private TextView totalPriceSelectedTextView;
     private Button checkoutButton;
     private int totalPrice;
+    private static final int CHECKOUT_REQUEST_CODE = 1001;
+    private static final int CART_DETAIL_REQUEST_CODE = 1002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,23 +48,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         totalPriceSelectedTextView = findViewById(R.id.total_price_selected);
         checkoutButton = findViewById(R.id.button_checkout);
 
-        checkoutButton.setOnClickListener(v -> {
-            List<Cart> selectedCartItems = new ArrayList<>();
-            for(Cart item : cartList) {
-                if(item.isChecked()) {
-                    selectedCartItems.add(item);
-                }
-            }
-
-            if (selectedCartItems.isEmpty()) {
-                Toast.makeText(CartActivity.this, "Hãy chọn món hàng cần thanh toán", Toast.LENGTH_SHORT).show();
-            } else {
-                Intent checkoutIntent = new Intent(CartActivity.this, CheckOutActivity.class);
-                checkoutIntent.putExtra("selectedCartItems", new ArrayList<>(selectedCartItems));
-                checkoutIntent.putExtra("totalPrice", totalPrice);
-                startActivity(checkoutIntent);
-            }
-        });
+        checkoutButton.setOnClickListener(v -> handleCheckout());
 
         calculateTotalPriceSelected();
     }
@@ -74,8 +60,13 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             @Override
             public void handleResponse(List<Cart> response) {
                 cartList = response;
-                cartAdapter = new CartAdapter(cartList, CartActivity.this, CartActivity.this);
-                cartRecyclerView.setAdapter(cartAdapter);
+                if (cartAdapter == null) {
+                    cartAdapter = new CartAdapter(cartList, CartActivity.this, CartActivity.this);
+                    cartRecyclerView.setAdapter(cartAdapter);
+                } else {
+                    cartAdapter.updateCartList(cartList);
+                }
+                calculateTotalPriceSelected();
             }
 
             @Override
@@ -133,5 +124,56 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         }
 
         totalPriceSelectedTextView.setText("Tổng tiền: " + this.totalPrice);
+    }
+
+    private void handleCheckout() {
+        List<Cart> selectedCartItems = new ArrayList<>();
+        for(Cart item : cartList) {
+            if(item.isChecked()) {
+                selectedCartItems.add(item);
+            }
+        }
+
+        if (selectedCartItems.isEmpty()) {
+            Toast.makeText(CartActivity.this, "Hãy chọn món hàng cần thanh toán", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent checkoutIntent = new Intent(CartActivity.this, CheckOutActivity.class);
+            checkoutIntent.putExtra("selectedCartItems", new ArrayList<>(selectedCartItems));
+            checkoutIntent.putExtra("totalPrice", totalPrice);
+            startActivityForResult(checkoutIntent, CHECKOUT_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHECKOUT_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Refresh the cart data
+                retrieveCartData();
+                Toast.makeText(this, "Đơn hàng đã được xác nhận thành công!", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == CART_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
+            Cart updatedItem = (Cart) data.getSerializableExtra("updatedCartItem");
+            if (updatedItem != null) {
+                // Cập nhật item trong cartList
+                for (int i = 0; i < cartList.size(); i++) {
+                    if (cartList.get(i).getObjectId().equals(updatedItem.getObjectId())) {
+                        cartList.set(i, updatedItem);
+                        cartAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+                calculateTotalPriceSelected();
+            }
+        }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Cart selectedItem = cartList.get(position);
+        Intent intent = new Intent(this, CartDetailActivity.class);
+        intent.putExtra("cartItem", selectedItem);
+        startActivityForResult(intent, CART_DETAIL_REQUEST_CODE);
     }
 }

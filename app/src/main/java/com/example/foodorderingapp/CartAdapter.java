@@ -26,6 +26,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public interface OnCartClickListener {
         void onDeleteClick(int position);
         void onCheckboxClick(int position, boolean isChecked);
+        void onItemClick(int position);
     }
 
     public CartAdapter(List<Cart> cartList, Context context, OnCartClickListener listener) {
@@ -47,15 +48,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         Glide.with(context)
                 .load(cartItem.getImage_source())
-                .placeholder(R.drawable.ic_placeholder) // Placeholder image if loading fails
-                .error(R.drawable.ic_error) // Error image if loading fails
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_error)
                 .into(holder.productImageView);
 
         holder.productName.setText(cartItem.getName());
         holder.quantity.setText("Số lượng: " + cartItem.getQuantity());
         holder.total.setText("Tổng tiền: " + cartItem.getTotal_price());
         holder.itemView.setTag(cartItem.getObjectId());
+        holder.checkBox.setChecked(cartItem.isChecked());
 
+        // Set click listeners
         holder.deleteButton.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteClick(holder.getAdapterPosition());
@@ -68,7 +71,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             }
         });
 
-        holder.checkBox.setChecked(cartItem.isChecked());
+        // Add click listener for the whole item
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -80,7 +88,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         this.cartList = newCartList;
         notifyDataSetChanged();
     }
-
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView productImageView;
