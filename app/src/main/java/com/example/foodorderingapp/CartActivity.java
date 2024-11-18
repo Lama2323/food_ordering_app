@@ -31,11 +31,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private int totalPrice;
     private static final int CHECKOUT_REQUEST_CODE = 1001;
     private static final int CART_DETAIL_REQUEST_CODE = 1002;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
+        currentUserId = Backendless.UserService.CurrentUser().getObjectId();
 
         ImageButton backButton = findViewById(R.id.button_back);
         backButton.setOnClickListener(v -> finish());
@@ -55,6 +58,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     private void retrieveCartData() {
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+
+        String whereClause = "customer_id = '" + currentUserId + "'";
+        queryBuilder.setWhereClause(whereClause);
 
         Backendless.Data.of(Cart.class).find(queryBuilder, new AsyncCallback<List<Cart>>() {
             @Override
