@@ -13,14 +13,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 import com.bumptech.glide.Glide;
 import com.example.foodorderingapp.classes.Cart;
+import com.example.foodorderingapp.classes.Product;
+
+import java.util.List;
 
 public class CartDetailActivity extends AppCompatActivity {
     private Cart cartItem;
+    private Product correspondingProduct;
     private TextView quantityTextView;
     private TextView totalPriceTextView;
     private int currentQuantity;
+    private int originalCartQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,10 @@ public class CartDetailActivity extends AppCompatActivity {
         }
 
         currentQuantity = cartItem.getQuantity();
+        originalCartQuantity = cartItem.getQuantity();
+
+        // Fetch corresponding product
+        fetchCorrespondingProduct();
 
         // Initialize views
         ImageButton backButton = findViewById(R.id.button_back);
@@ -70,11 +80,37 @@ public class CartDetailActivity extends AppCompatActivity {
         });
 
         increaseButton.setOnClickListener(v -> {
-            currentQuantity++;
-            updateQuantityAndTotal();
+            if (correspondingProduct != null &&
+                    (originalCartQuantity - currentQuantity) < correspondingProduct.getQuantity()) {
+                currentQuantity++;
+                updateQuantityAndTotal();
+            } else {
+                Toast.makeText(this, "Không đủ số lượng sản phẩm", Toast.LENGTH_SHORT).show();
+            }
         });
 
-        okButton.setOnClickListener(v -> updateCartItem());
+        okButton.setOnClickListener(v -> updateCartAndProduct());
+    }
+
+    private void fetchCorrespondingProduct() {
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause("name = '" + cartItem.getName() + "'");
+
+        Backendless.Data.of(Product.class).find(queryBuilder, new AsyncCallback<List<Product>>() {
+            @Override
+            public void handleResponse(List<Product> response) {
+                if (response != null && !response.isEmpty()) {
+                    correspondingProduct = response.get(0);
+                }
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Toast.makeText(CartDetailActivity.this,
+                        "Error fetching product: " + fault.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updateQuantityAndTotal() {
@@ -83,23 +119,48 @@ public class CartDetailActivity extends AppCompatActivity {
         totalPriceTextView.setText("Tổng tiền: " + totalPrice);
     }
 
-    private void updateCartItem() {
-        cartItem.setQuantity(currentQuantity);
+    private void updateCartAndProduct() {
+        if (correspondingProduct == null) {
+            Toast.makeText(this, "Không tìm thấy sản phẩm tương ứng", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Backendless.Data.of(Cart.class).save(cartItem, new AsyncCallback<Cart>() {
+        // Calculate quantity difference
+        int quantityDifference = originalCartQuantity - currentQuantity;
+
+        // Update product quantity
+        correspondingProduct.setQuantity(correspondingProduct.getQuantity() + quantityDifference);
+
+        // Update product first
+        Backendless.Data.of(Product.class).save(correspondingProduct, new AsyncCallback<Product>() {
             @Override
-            public void handleResponse(Cart response) {
-                // Send result back to CartActivity
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("updatedCartItem", response);
-                setResult(RESULT_OK, resultIntent);
-                finish();
+            public void handleResponse(Product response) {
+                // After product is updated, update cart
+                cartItem.setQuantity(currentQuantity);
+
+                Backendless.Data.of(Cart.class).save(cartItem, new AsyncCallback<Cart>() {
+                    @Override
+                    public void handleResponse(Cart response) {
+                        // Send result back to CartActivity
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("updatedCartItem", response);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void handleFault(BackendlessFault fault) {
+                        Toast.makeText(CartDetailActivity.this,
+                                "Error updating cart: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void handleFault(BackendlessFault fault) {
                 Toast.makeText(CartDetailActivity.this,
-                        "Error updating cart: " + fault.getMessage(),
+                        "Error updating product: " + fault.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
         });

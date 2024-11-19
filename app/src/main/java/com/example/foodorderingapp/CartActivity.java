@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
@@ -32,6 +33,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private static final int CHECKOUT_REQUEST_CODE = 1001;
     private static final int CART_DETAIL_REQUEST_CODE = 1002;
     private String currentUserId;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         cartRecyclerView = findViewById(R.id.cart_list);
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Initialize SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        setupSwipeRefresh();
+
         retrieveCartData();
 
         totalPriceSelectedTextView = findViewById(R.id.total_price_selected);
@@ -54,6 +60,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         checkoutButton.setOnClickListener(v -> handleCheckout());
 
         calculateTotalPriceSelected();
+    }
+
+    private void setupSwipeRefresh() {
+        swipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
+        );
+
+        swipeRefreshLayout.setOnRefreshListener(this::retrieveCartData);
     }
 
     private void retrieveCartData() {
@@ -73,12 +90,16 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                     cartAdapter.updateCartList(cartList);
                 }
                 calculateTotalPriceSelected();
+                // Hide refresh indicator
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void handleFault(BackendlessFault fault) {
                 Toast.makeText(CartActivity.this, "Error retrieving cart data: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e("CartActivity", "Error: " + fault.getMessage());
+                // Hide refresh indicator even if there's an error
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -109,7 +130,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             }
         }
     }
-
 
     @Override
     public void onCheckboxClick(int position, boolean isChecked) {
@@ -156,12 +176,26 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (requestCode == CHECKOUT_REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList<String> deletedItems = data.getStringArrayListExtra("deletedItems");
             if (deletedItems != null && !deletedItems.isEmpty()) {
-                // Xóa các items đã thanh toán khỏi cartList
                 cartList.removeIf(cartItem ->
                         deletedItems.contains(cartItem.getObjectId())
                 );
                 cartAdapter.notifyDataSetChanged();
                 calculateTotalPriceSelected();
+            }
+        }
+        // Thêm xử lý cho CART_DETAIL_REQUEST_CODE
+        else if (requestCode == CART_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
+            Cart updatedCartItem = (Cart) data.getSerializableExtra("updatedCartItem");
+            if (updatedCartItem != null) {
+                // Tìm và cập nhật item trong cartList
+                for (int i = 0; i < cartList.size(); i++) {
+                    if (cartList.get(i).getObjectId().equals(updatedCartItem.getObjectId())) {
+                        cartList.set(i, updatedCartItem);
+                        cartAdapter.notifyItemChanged(i);
+                        calculateTotalPriceSelected();
+                        break;
+                    }
+                }
             }
         }
     }

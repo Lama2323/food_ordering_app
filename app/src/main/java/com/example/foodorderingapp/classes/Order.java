@@ -1,4 +1,3 @@
-// Order.java
 package com.example.foodorderingapp.classes;
 
 import java.io.Serializable;
