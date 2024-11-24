@@ -20,6 +20,7 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserIdStorageFactory;
+import com.example.foodorderingapp.utils.NetworkUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,6 +46,15 @@ public class LoginActivity extends AppCompatActivity {
                 Environment.APPLICATION_ID,
                 Environment.API_KEY
         );
+
+        if (!NetworkUtils.isNetworkConnected(this)) {
+            Intent intent = new Intent(this, DisconnectedActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        setContentView(R.layout.activity_main);
+        // Code khác của MainActivity
 
         _btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         _txtResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
             }
         });
 
