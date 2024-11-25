@@ -19,6 +19,7 @@ import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.example.foodorderingapp.classes.Product;
+import com.example.foodorderingapp.utils.VietnameseUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -135,9 +136,12 @@ public class ProductActivity extends AppCompatActivity {
         if (searchText.isEmpty()) {
             productList.addAll(allProductsList);
         } else {
-            String lowerCaseSearch = searchText.toLowerCase(Locale.getDefault());
+            String lowerCaseSearch = VietnameseUtils.removeAccents(searchText.toLowerCase(Locale.getDefault()));
             for (Product product : allProductsList) {
-                if (product.getName().toLowerCase(Locale.getDefault()).contains(lowerCaseSearch)) {
+                String normalizedProductName = VietnameseUtils.removeAccents(
+                        product.getName().toLowerCase(Locale.getDefault())
+                );
+                if (normalizedProductName.contains(lowerCaseSearch)) {
                     productList.add(product);
                 }
             }
