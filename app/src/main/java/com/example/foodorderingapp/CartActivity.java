@@ -1,5 +1,6 @@
 package com.example.foodorderingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -12,9 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
+import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.example.foodorderingapp.classes.Cart;
 
 import java.util.List;
@@ -26,6 +29,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private List<Cart> cartList;
     private TextView totalPriceSelectedTextView;
     private Button checkoutButton;
+    private ImageButton btnProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +46,21 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         totalPriceSelectedTextView = findViewById(R.id.total_price_selected);
         checkoutButton = findViewById(R.id.button_checkout);
+        btnProfile = findViewById(R.id.btn_Profile);
 
         checkoutButton.setOnClickListener(v -> {
             Toast.makeText(CartActivity.this, "Thanh toán", Toast.LENGTH_SHORT).show(); // tạm thời
+        });
+
+        //String loggedInUser = Backendless.UserService.CurrentUser().getObjectId();
+        //String token = UserTokenStorageFactory.instance().getStorage().get();
+
+        //Toast.makeText(CartActivity.this,"loggedInUser, token: " + loggedInUser + ", " + token, Toast.LENGTH_SHORT).show();
+        //Log.d("CartActivity", "currentUserId, token: " + loggedInUser + ", " + token);
+
+        btnProfile.setOnClickListener(v -> {
+            startActivity(new Intent(CartActivity.this, ProfileActivity.class));
+            this.finish();
         });
 
         calculateTotalPriceSelected();

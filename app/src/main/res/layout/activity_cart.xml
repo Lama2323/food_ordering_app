@@ -82,26 +82,29 @@
         android:background="#FFFFFF"
         android:gravity="center">
 
-        <ImageView
-            android:id="@+id/nav_button_1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <ImageButton
+            android:id="@+id/btn_Profile"
+            android:layout_width="20dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_profile" />
+            android:background="@drawable/ic_profile"
+            android:scaleType="fitCenter" />
 
-        <ImageView
-            android:id="@+id/nav_button_2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <ImageButton
+            android:id="@+id/btn_Home"
+            android:layout_width="20dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_home" />
+            android:src="@drawable/ic_home"
+            android:scaleType="fitCenter" />
 
-        <ImageView
-            android:id="@+id/nav_button_3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <ImageButton
+            android:id="@+id/btn_Cart"
+            android:layout_width="20dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_cart" />
+            android:src="@drawable/ic_cart"
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
 </LinearLayout>
