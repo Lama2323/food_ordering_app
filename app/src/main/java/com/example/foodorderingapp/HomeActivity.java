@@ -18,11 +18,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        Backendless.initApp( getApplicationContext(),
-                Environment.APPLICATION_ID,
-                Environment.API_KEY );
+        Backendless.initApp( getApplicationContext(), Environment.APPLICATION_ID, Environment.API_KEY );
 
-        Intent intent = new Intent(this, CartActivity.class);
+        Intent intent = new Intent(this, ProductActivity.class);
         startActivity(intent);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

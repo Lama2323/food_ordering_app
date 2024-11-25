@@ -13,9 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 import com.bumptech.glide.Glide;
 import com.example.foodorderingapp.classes.Cart;
+import com.example.foodorderingapp.classes.Favorite;
 import com.example.foodorderingapp.classes.Product;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private ImageView productImage;
@@ -29,6 +35,9 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private Product currentProduct;
     private int selectedQuantity = 1;
+
+    private ImageButton btnFavorite;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +53,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnIncrease = findViewById(R.id.btnIncrease);
         tvQuantity = findViewById(R.id.tvQuantity);
         btnAddToCart = findViewById(R.id.btnAddToCart);
+
+        btnFavorite = findViewById(R.id.btnFavorite);
+        btnFavorite.setOnClickListener(v -> toggleFavorite());
 
         // Set up quantity controls
         btnDecrease.setOnClickListener(v -> updateQuantity(-1));
@@ -92,6 +104,86 @@ public class ProductDetailActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+        checkFavoriteStatus(objectId);
+    }
+
+    private void checkFavoriteStatus(String productId) {
+        String currentUserId = Backendless.UserService.CurrentUser().getObjectId();
+
+        String whereClause = "customer_id = '" + currentUserId + "' AND product_id = '" + productId + "'";
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause(whereClause);
+
+        Backendless.Data.of(Favorite.class).find(queryBuilder, new AsyncCallback<List<Favorite>>() {
+            @Override
+            public void handleResponse(List<Favorite> favorites) {
+                isFavorite = !favorites.isEmpty();
+                updateFavoriteButton();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Toast.makeText(ProductDetailActivity.this, "Lỗi kiểm tra yêu thích: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void toggleFavorite() {
+        if (currentProduct == null) return;
+
+        btnFavorite.setEnabled(false); // Disable button immediately
+
+        String currentUserId = Backendless.UserService.CurrentUser().getObjectId();
+        String productId = currentProduct.getObjectId();
+
+        isFavorite = !isFavorite; // Toggle the state immediately
+        updateFavoriteButton();    // Update the UI immediately
+
+        if (isFavorite) {
+            // Add to favorites
+            Favorite favorite = new Favorite(currentUserId, productId);
+            Backendless.Data.of(Favorite.class).save(favorite, new AsyncCallback<Favorite>() {
+                @Override
+                public void handleResponse(Favorite response) {
+                    btnFavorite.setEnabled(true);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    Toast.makeText(ProductDetailActivity.this, "Lỗi thêm yêu thích: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+                    isFavorite = !isFavorite; // Revert state on failure
+                    updateFavoriteButton();
+                    btnFavorite.setEnabled(true);
+                }
+            });
+        } else {
+            // Remove from favorites - optimize by removing directly with whereClause
+            String whereClause = "customer_id = '" + currentUserId + "' AND product_id = '" + productId + "'";
+
+            Backendless.Data.of(Favorite.class).remove(whereClause, new AsyncCallback<Integer>() {
+                @Override
+                public void handleResponse(Integer response) {
+                    btnFavorite.setEnabled(true);
+
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    Toast.makeText(ProductDetailActivity.this, "Lỗi bỏ yêu thích: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+                    isFavorite = !isFavorite; // Revert state on failure
+                    updateFavoriteButton();
+                    btnFavorite.setEnabled(true);
+
+                }
+            });
+        }
+    }
+
+    private void updateFavoriteButton() {
+        btnFavorite.setImageResource(isFavorite ? R.drawable.ic_heart_red : R.drawable.ic_heart_gray);
+
     }
 
     private void updateQuantity(int change) {

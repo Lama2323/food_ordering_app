@@ -30,6 +30,28 @@
             android:textColor="@android:color/holo_red_dark"
             android:textSize="20sp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yêu thích"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_heart_gray"
+                android:contentDescription="like"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/productDetailDescription"
             android:layout_width="match_parent"
@@ -51,7 +73,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_minus" />
+                android:src="@drawable/ic_minus"
+                android:contentDescription="decrease"/>
 
             <TextView
                 android:id="@+id/tvQuantity"
@@ -67,7 +90,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_plus" />
+                android:src="@drawable/ic_plus"
+                android:contentDescription="increase"/>
         </LinearLayout>
 
         <!-- Add to Cart Button -->
