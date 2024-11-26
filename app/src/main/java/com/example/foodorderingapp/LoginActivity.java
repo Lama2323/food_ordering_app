@@ -33,17 +33,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Check if redirected from other activity
         isRedirectFromOtherActivity = getIntent().getBooleanExtra("fromActivity", false);
 
         // Init views
         initViews();
         setupClickListeners();
 
-        // Only check auto login if not redirected
-        if (!isRedirectFromOtherActivity) {
-            checkAutoLogin();
-        }
     }
 
     private void initViews() {
@@ -118,47 +113,11 @@ public class LoginActivity extends AppCompatActivity {
         }, true);
     }
 
-    private void checkAutoLogin() {
-        // Show loading nếu cần
-        Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
-            @Override
-            public void handleResponse(Boolean response) {
-                if(response) {
-                    String userObjectId = UserIdStorageFactory.instance().getStorage().get();
-
-                    Backendless.Data.of(BackendlessUser.class).findById(userObjectId, new AsyncCallback<BackendlessUser>() {
-                        @Override
-                        public void handleResponse(BackendlessUser response) {
-                            // Auto login successful - chuyển thẳng đến ProductActivity
-                            Toast.makeText(LoginActivity.this,
-                                    "Đang đăng nhập với tài khoản đã lưu...",
-                                    Toast.LENGTH_SHORT).show();
-
-                            startActivity(new Intent(LoginActivity.this, ProductActivity.class));
-                            LoginActivity.this.finish();
-                        }
-
-                        @Override
-                        public void handleFault(BackendlessFault fault) {
-                            // Auto login failed - ở lại màn login
-                            Log.e("LoginActivity", "Auto login error: " + fault.getMessage());
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void handleFault(BackendlessFault fault) {
-                Log.e("LoginActivity", "Check valid login error: " + fault.getMessage());
-            }
-        });
-    }
-
     @Override
     public void onBackPressed() {
         // Sửa lại logic onBackPressed
         if(isRedirectFromOtherActivity) {
-            finishAffinity(); // Đóng tất cả activity và thoát app
+            finishAffinity();
         } else {
             super.onBackPressed();
         }

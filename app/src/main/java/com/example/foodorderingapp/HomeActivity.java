@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessUser;
 import com.example.foodorderingapp.utils.NetworkChangeReceiver;
 import com.example.foodorderingapp.utils.NetworkUtils;
 
@@ -25,33 +26,23 @@ public class HomeActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        /*
-         * Backendless.initApp( getApplicationContext(),
-         * Environment.APPLICATION_ID,
-         * Environment.API_KEY );
-         */
+        // Khởi tạo Backendless
         Backendless.initApp(getApplicationContext(), Environment.APPLICATION_ID, Environment.API_KEY);
 
-        networkChangeReceiver = new NetworkChangeReceiver();
+        // Thiết lập network receiver
+        setupNetworkReceiver();
 
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkChangeReceiver, filter);
-
+        // Kiểm tra kết nối mạng
         if (!NetworkUtils.isNetworkConnected(this)) {
-            Intent intent = new Intent(this, DisconnectedActivity.class);
-            startActivity(intent);
-            finish();
+            navigateToDisconnected();
+            return;
         }
 
-        // setContentView(R.layout.activity_main);
+        // Lấy current user
+        BackendlessUser currentUser = Backendless.UserService.CurrentUser();
 
-
-        Intent intent;
-        if (Backendless.UserService.CurrentUser() == null) {
-            intent = new Intent(this, LoginActivity.class);
-        } else {
-            intent = new Intent(this, ProductActivity.class);
-        }
+        // Điều hướng dựa trên trạng thái user
+        Intent intent = new Intent(this, (currentUser == null) ? LoginActivity.class : ProductActivity.class);
         startActivity(intent);
         finish();
 
@@ -62,10 +53,21 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void setupNetworkReceiver() {
+        networkChangeReceiver = new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeReceiver, filter);
+    }
+
+    private void navigateToDisconnected() {
+        Intent intent = new Intent(this, DisconnectedActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (networkChangeReceiver != null) {
             unregisterReceiver(networkChangeReceiver);
         }
