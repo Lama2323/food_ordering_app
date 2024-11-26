@@ -10,15 +10,16 @@
     <CheckBox
         android:id="@+id/check_box_cart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp" />
+        android:layout_height="wrap_content"/>
 
     <ImageView
         android:id="@+id/product_image_view"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:scaleType="centerCrop"
-        android:layout_marginEnd="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_food"
         android:contentDescription="Product image" />
 
     <LinearLayout
@@ -34,7 +35,7 @@
             android:textSize="16sp"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            android:text="Tên: "
+            android:text="pizza"
             android:layout_marginBottom="4dp" />
 
         <TextView
@@ -42,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:text="Số lượng: "
+            android:text="Số lượng: 1"
             android:layout_marginBottom="4dp" />
 
         <TextView
@@ -50,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:text="Tổng tiền: "
+            android:text="Tổng tiền: 90000"
             android:textColor="@android:color/holo_red_dark" />
 
     </LinearLayout>

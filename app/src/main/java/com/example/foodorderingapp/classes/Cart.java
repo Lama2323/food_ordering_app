@@ -3,14 +3,18 @@ package com.example.foodorderingapp.classes;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import java.io.Serializable;
 
-public class Cart {
+public class Cart implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String image_source;
     private String name;
     private int price;
     private int quantity;
     private boolean isChecked;
     private String objectId;
+    private String customer_id;
 
     public Cart() {}
 
@@ -71,18 +75,27 @@ public class Cart {
         this.objectId = objectId;
     }
 
+    public String getCustomer_id() {
+        return customer_id;
+    }
+
+    public void setCustomer_id(String customer_id) {
+        this.customer_id = customer_id;
+    }
+
     public static void addToCart(Cart cartItem) {
+        // Set the customer_id before saving
+        cartItem.setCustomer_id(Backendless.UserService.CurrentUser().getObjectId());
+
         System.out.println("Saving cart item: " + cartItem);
         Backendless.Data.of(Cart.class).save(cartItem, new AsyncCallback<Cart>() {
             @Override
             public void handleResponse(Cart response) {
-                // Xử lý khi thêm thành công
                 System.out.println("Đã thêm món ăn vào giỏ hàng: " + response.getName());
             }
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                // Xử lý khi có lỗi
                 System.out.println("Lỗi khi thêm vào giỏ hàng: " + fault.getMessage());
             }
         });

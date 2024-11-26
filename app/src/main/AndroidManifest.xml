@@ -18,9 +18,23 @@
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
-        <!-- Khai báo các activity -->
         <activity
             android:name=".DisconnectedActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProductAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".CartDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CheckOutActivity"
             android:exported="false" />
         <activity
             android:name=".RegisterActivity"
