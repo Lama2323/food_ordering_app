@@ -30,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
          * Environment.APPLICATION_ID,
          * Environment.API_KEY );
          */
+        Backendless.initApp(getApplicationContext(), Environment.APPLICATION_ID, Environment.API_KEY);
 
         networkChangeReceiver = new NetworkChangeReceiver();
 
@@ -43,10 +44,16 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         // setContentView(R.layout.activity_main);
-        Backendless.initApp(getApplicationContext(), Environment.APPLICATION_ID, Environment.API_KEY);
 
-        Intent intent = new Intent(this, ProductActivity.class);
+
+        Intent intent;
+        if (Backendless.UserService.CurrentUser() == null) {
+            intent = new Intent(this, LoginActivity.class);
+        } else {
+            intent = new Intent(this, ProductActivity.class);
+        }
         startActivity(intent);
+        finish();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
