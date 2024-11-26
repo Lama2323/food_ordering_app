@@ -31,7 +31,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private List<Cart> cartList;
     private TextView totalPriceSelectedTextView;
     private Button checkoutButton;
-    private ImageButton btnProfile;
     private int totalPrice;
     private static final int CHECKOUT_REQUEST_CODE = 1001;
     private static final int CART_DETAIL_REQUEST_CODE = 1002;
@@ -59,7 +58,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         totalPriceSelectedTextView = findViewById(R.id.total_price_selected);
         checkoutButton = findViewById(R.id.button_checkout);
-        btnProfile = findViewById(R.id.btn_Profile);
 
         checkoutButton.setOnClickListener(v -> handleCheckout());
 
@@ -70,11 +68,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         // " + token, Toast.LENGTH_SHORT).show();
         // Log.d("CartActivity", "currentUserId, token: " + loggedInUser + ", " +
         // token);
-
-        btnProfile.setOnClickListener(v -> {
-            startActivity(new Intent(CartActivity.this, ProfileActivity.class));
-            this.finish();
-        });
 
         calculateTotalPriceSelected();
     }

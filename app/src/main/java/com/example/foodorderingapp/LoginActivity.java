@@ -2,6 +2,7 @@ package com.example.foodorderingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -85,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //keep user login
+        Log.v("LoginActivity", "feat check user login");
         Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
             @Override
             public void handleResponse(Boolean response) {
