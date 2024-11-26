@@ -73,7 +73,8 @@
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:text="Quên mật khẩu? Nhấn vào đây" />
+            android:text="Quên mật khẩu? Nhấn vào đây"
+            android:alpha="0.5" />
 
     </LinearLayout>
 

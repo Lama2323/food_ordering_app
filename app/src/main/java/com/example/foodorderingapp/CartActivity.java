@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
+import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.example.foodorderingapp.classes.Cart;
 
 import java.util.ArrayList;
@@ -59,6 +61,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         checkoutButton.setOnClickListener(v -> handleCheckout());
 
+        // String loggedInUser = Backendless.UserService.CurrentUser().getObjectId();
+        // String token = UserTokenStorageFactory.instance().getStorage().get();
+
+        // Toast.makeText(CartActivity.this,"loggedInUser, token: " + loggedInUser + ",
+        // " + token, Toast.LENGTH_SHORT).show();
+        // Log.d("CartActivity", "currentUserId, token: " + loggedInUser + ", " +
+        // token);
+
         calculateTotalPriceSelected();
     }
 
@@ -67,8 +77,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
-        );
+                android.R.color.holo_red_light);
 
         swipeRefreshLayout.setOnRefreshListener(this::retrieveCartData);
     }
@@ -96,7 +105,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
             @Override
             public void handleFault(BackendlessFault fault) {
-                Toast.makeText(CartActivity.this, "Error retrieving cart data: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CartActivity.this, "Error retrieving cart data: " + fault.getMessage(),
+                        Toast.LENGTH_SHORT).show();
                 Log.e("CartActivity", "Error: " + fault.getMessage());
                 // Hide refresh indicator even if there's an error
                 swipeRefreshLayout.setRefreshing(false);
@@ -121,7 +131,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        Toast.makeText(CartActivity.this, "Error deleting item: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CartActivity.this, "Error deleting item: " + fault.getMessage(),
+                                Toast.LENGTH_SHORT).show();
                         Log.e("CartActivity", "Error deleting item: " + fault.getMessage());
                     }
                 });
@@ -154,8 +165,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     private void handleCheckout() {
         List<Cart> selectedCartItems = new ArrayList<>();
-        for(Cart item : cartList) {
-            if(item.isChecked()) {
+        for (Cart item : cartList) {
+            if (item.isChecked()) {
                 selectedCartItems.add(item);
             }
         }
@@ -176,9 +187,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (requestCode == CHECKOUT_REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList<String> deletedItems = data.getStringArrayListExtra("deletedItems");
             if (deletedItems != null && !deletedItems.isEmpty()) {
-                cartList.removeIf(cartItem ->
-                        deletedItems.contains(cartItem.getObjectId())
-                );
+                cartList.removeIf(cartItem -> deletedItems.contains(cartItem.getObjectId()));
                 cartAdapter.notifyDataSetChanged();
                 calculateTotalPriceSelected();
             }
