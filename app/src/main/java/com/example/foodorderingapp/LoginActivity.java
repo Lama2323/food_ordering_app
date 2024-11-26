@@ -1,9 +1,7 @@
 package com.example.foodorderingapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,12 +18,7 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
-import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.persistence.local.UserIdStorageFactory;
-import com.example.foodorderingapp.utils.NetworkUtils;
-
-import java.util.List;
-import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,24 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         _btnRegister = findViewById(R.id.btn_Register);
         _txtResetPassword = findViewById(R.id.txt_LoginPassword);
 
-        //Log.i("LoginActivity", "b4 init app");
-
-        //khởi tạo tránh crash app
-        Backendless.initApp(
-                this,
-                Environment.APPLICATION_ID,
-                Environment.API_KEY
-        );
-
-        //Log.i("LoginActivity", "after init app");
-
-        if (!NetworkUtils.isNetworkConnected(this)) {
-            Intent intent = new Intent(this, DisconnectedActivity.class);
-            startActivity(intent);
-            Log.e("LoginActivity", "No Internet");
-            finish();
-        }
-
         _btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,44 +51,20 @@ public class LoginActivity extends AppCompatActivity {
                     String email = _txtEmail.getText().toString().trim();
                     String password = _txtPassword.getText().toString().trim();
 
-                    DataQueryBuilder queryBuilder = DataQueryBuilder.create();
-                    queryBuilder.setWhereClause("email = '" + email + "' AND password = '" + password + "'");
-
-                    Backendless.Data.of("user").find(queryBuilder, new AsyncCallback<List<Map>>() {
+                    Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
                         @Override
-                        public void handleResponse(List<Map> foundUsers) {
-                            if (foundUsers != null && !foundUsers.isEmpty())
-                            {
-                                Map user = foundUsers.get(0);
-
-                                Log.v("LoginActivity", "Login success: " + user.get("email"));
-                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-
-                                //sau khi đăng nhập thành công, lưu email vào Prefs (tương tự như PlayerPrefs bên Unity) - lưu local
-                                //để thực hiện truy vấn dựa trên cái mail người dùng
-                                //Nên tạo 1 file riêng chứa các constant là các key này:
-                                //vd: const string PrefsUserInfo = "UserInfo"; để dễ quản lý
-                                SharedPreferences prefs = getSharedPreferences("UserInfo", MODE_PRIVATE);
-                                prefs.edit().putString("email", email).apply();
-
-                                Intent intent = new Intent(LoginActivity.this, CartActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                            else
-                            {
-                                Log.e("LoginActivity", "User " + email + "not found");
-                                Toast.makeText(LoginActivity.this, "Sai email hoặc mật khẩu", Toast.LENGTH_SHORT).show();
-                            }
+                        public void handleResponse(BackendlessUser response) {
+                            Toast.makeText(LoginActivity.this,"Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                            LoginActivity.this.finish();
                         }
 
                         @Override
-                        public void handleFault(BackendlessFault fault)
-                        {
-                            Log.e("LoginActivity", "Login failed: " + fault.getMessage());
-                            Toast.makeText(LoginActivity.this, "Lỗi khi đăng nhập: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
+                        public void handleFault(BackendlessFault fault) {
+                            Toast.makeText(LoginActivity.this,"Đăng nhập thất bại, lỗi: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    }, true);
+
                 }
             }
         });
@@ -121,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         _btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("LoginActivity", "Register");
+                //Log.v("LoginActivity", "here");
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
         });
@@ -143,11 +94,9 @@ public class LoginActivity extends AppCompatActivity {
                     Backendless.Data.of(BackendlessUser.class).findById(userObjectId, new AsyncCallback<BackendlessUser>() {
                         @Override
                         public void handleResponse(BackendlessUser response) {
-                            Log.d("LoginActivity", "UserClass: " + BackendlessUser.class);
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             LoginActivity.this.finish();
                         }
-
                         @Override
                         public void handleFault(BackendlessFault fault) {
                             Toast.makeText(LoginActivity.this,"Lỗi: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
@@ -155,11 +104,9 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 }
             }
-
             @Override
             public void handleFault(BackendlessFault fault) {
                 Toast.makeText(LoginActivity.this,"Lỗi: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
-
             }
         });
 
