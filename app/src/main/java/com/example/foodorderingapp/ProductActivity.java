@@ -19,10 +19,15 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.foodorderingapp.classes.Cart;
 import com.example.foodorderingapp.classes.Product;
 import com.example.foodorderingapp.utils.VietnameseUtils;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -40,6 +45,8 @@ public class ProductActivity extends BaseAuthenticatedActivity {
     private EditText searchEditText;
     private TextView userNameTextView;
     private ImageView profileIcon;
+    private BadgeDrawable cartBadge;
+    private static final int CART_REQUEST_CODE = 100;
 
     // Data
     private final List<Product> productList = new ArrayList<>();
@@ -57,6 +64,7 @@ public class ProductActivity extends BaseAuthenticatedActivity {
         setContentView(R.layout.activity_product);
     }
 
+    @ExperimentalBadgeUtils
     @Override
     protected void onAuthenticated() {
         try {
@@ -67,9 +75,11 @@ public class ProductActivity extends BaseAuthenticatedActivity {
                 setupSwipeRefresh();
                 setupSearch();
                 setupClickListeners();
+                setupCartBadge();
                 isInitialized = true;
             }
             loadProducts();
+            updateCartBadge();
         } catch (Exception e) {
             Log.e(TAG, "Error in onAuthenticated: " + e.getMessage(), e);
             Toast.makeText(this, "Error initializing product view", Toast.LENGTH_SHORT).show();
@@ -137,6 +147,14 @@ public class ProductActivity extends BaseAuthenticatedActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CART_REQUEST_CODE && resultCode == RESULT_OK) {
+            updateCartBadge();
+        }
+    }
+
     private void setupRecyclerView() {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
@@ -172,7 +190,7 @@ public class ProductActivity extends BaseAuthenticatedActivity {
     private void setupClickListeners() {
         cartFab.setOnClickListener(v -> {
             Intent intent = new Intent(this, CartActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, CART_REQUEST_CODE); // Thay vì startActivity
         });
 
         profileIcon.setOnClickListener(v -> {
@@ -278,6 +296,7 @@ public class ProductActivity extends BaseAuthenticatedActivity {
     protected void onResume() {
         super.onResume();
         if (isInitialized) {
+            updateCartBadge();
             if (getIntent().getBooleanExtra("USER_UPDATED", false)) {
                 setupUserInfo();
                 // Xóa flag để tránh load lại khi activity resume lần sau
@@ -290,5 +309,44 @@ public class ProductActivity extends BaseAuthenticatedActivity {
     protected void handleAuthenticationError(Exception e) {
         super.handleAuthenticationError(e);
         showError("Authentication error occurred");
+    }
+
+    @ExperimentalBadgeUtils
+    private void setupCartBadge() {
+        cartBadge = BadgeDrawable.create(this);
+        cartBadge.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+        cartBadge.setBadgeTextColor(getResources().getColor(android.R.color.white));
+        cartBadge.setBadgeGravity(BadgeDrawable.TOP_END);
+        cartBadge.setHorizontalOffset(20);
+        cartBadge.setVerticalOffset(20);
+
+        // Attach badge to FAB
+        BadgeUtils.attachBadgeDrawable(cartBadge, cartFab);
+    }
+
+    private void updateCartBadge() {
+        String whereClause = "customer_id = '" + Backendless.UserService.CurrentUser().getObjectId() + "'";
+        DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+        queryBuilder.setWhereClause(whereClause);
+
+        Backendless.Data.of(Cart.class).find(queryBuilder, new AsyncCallback<List<Cart>>() {
+            @Override
+            public void handleResponse(List<Cart> response) {
+                runOnUiThread(() -> {
+                    int itemCount = response != null ? response.size() : 0;
+                    if (itemCount > 0) {
+                        cartBadge.setVisible(true);
+                        cartBadge.setNumber(itemCount);
+                    } else {
+                        cartBadge.setVisible(false);
+                    }
+                });
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.e(TAG, "Error loading cart items: " + fault.getMessage());
+            }
+        });
     }
 }

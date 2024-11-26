@@ -230,6 +230,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                     tvQuantity.setText("1");
                 }
 
+                setResult(RESULT_OK);
+
                 Toast.makeText(ProductDetailActivity.this,
                         "Đã thêm vào giỏ hàng",
                         Toast.LENGTH_SHORT).show();
