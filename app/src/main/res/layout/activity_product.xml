@@ -63,7 +63,7 @@
                 android:padding="8dp" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+        <!-- bọc component  cần vuốt xuống để refresh trong SwipeRefreshLayout như trên-->
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
