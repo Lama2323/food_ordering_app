@@ -26,96 +26,100 @@ public class LoginActivity extends AppCompatActivity {
     private EditText _txtEmail, _txtPassword;
     private Button _btnLogin, _btnRegister;
     private TextView _txtResetPassword;
+    private boolean isRedirectFromOtherActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
+        isRedirectFromOtherActivity = getIntent().getBooleanExtra("fromActivity", false);
+
+        // Init views
+        initViews();
+        setupClickListeners();
+
+    }
+
+    private void initViews() {
         _txtEmail = findViewById(R.id.txt_LoginEmailAddress);
         _txtPassword = findViewById(R.id.txt_LoginPassword);
         _btnLogin = findViewById(R.id.btn_Login);
         _btnRegister = findViewById(R.id.btn_Register);
         _txtResetPassword = findViewById(R.id.txt_LoginPassword);
+    }
 
-        _btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void setupClickListeners() {
+        // Login button click
+        _btnLogin.setOnClickListener(v -> {
+            String email = _txtEmail.getText().toString().trim();
+            String password = _txtPassword.getText().toString().trim();
 
-                if(_txtEmail.getText().toString().isEmpty() || _txtPassword.getText().toString().isEmpty())
-                {
-                    Toast.makeText(LoginActivity.this,"Hãy nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    String email = _txtEmail.getText().toString().trim();
-                    String password = _txtPassword.getText().toString().trim();
-
-                    Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
-                        @Override
-                        public void handleResponse(BackendlessUser response) {
-                            Toast.makeText(LoginActivity.this,"Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                            LoginActivity.this.finish();
-                        }
-
-                        @Override
-                        public void handleFault(BackendlessFault fault) {
-                            Toast.makeText(LoginActivity.this,"Đăng nhập thất bại, lỗi: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }, true);
-
-                }
+            if(email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Hãy nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // Show loading
+            _btnLogin.setEnabled(false);
+            _btnLogin.setText("Đang đăng nhập...");
+
+            loginUser(email, password);
         });
 
-        _btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Log.v("LoginActivity", "here");
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-            }
+        // Register button click
+        _btnRegister.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
 
-        _txtResetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        // Reset password click
+        _txtResetPassword.setOnClickListener(v -> {
+            // Handle reset password
         });
+    }
 
-        //keep user login
-        Log.v("LoginActivity", "feat check user login");
-        Backendless.UserService.isValidLogin(new AsyncCallback<Boolean>() {
+    private void loginUser(String email, String password) {
+        Backendless.UserService.login(email, password, new AsyncCallback<BackendlessUser>() {
             @Override
-            public void handleResponse(Boolean response) {
-                if (response)
-                {
-                    String userObjectId = UserIdStorageFactory.instance().getStorage().get();
-                    Backendless.Data.of(BackendlessUser.class).findById(userObjectId, new AsyncCallback<BackendlessUser>() {
-                        @Override
-                        public void handleResponse(BackendlessUser response) {
-                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                            LoginActivity.this.finish();
-                        }
-                        @Override
-                        public void handleFault(BackendlessFault fault) {
-                            Toast.makeText(LoginActivity.this,"Lỗi: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+            public void handleResponse(BackendlessUser response) {
+                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                LoginActivity.this.finish();
             }
+
             @Override
             public void handleFault(BackendlessFault fault) {
-                Toast.makeText(LoginActivity.this,"Lỗi: " + fault.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                // Reset button state
+                _btnLogin.setEnabled(true);
+                _btnLogin.setText("Đăng nhập");
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+                // Show error
+                String errorMessage = "Đăng nhập thất bại: ";
+
+                // Map error codes to friendly messages
+                switch(fault.getCode()) {
+                    case "3003":
+                        errorMessage += "Email hoặc mật khẩu không đúng";
+                        break;
+                    case "3000":
+                        errorMessage += "Email không đúng định dạng";
+                        break;
+                    default:
+                        errorMessage += fault.getMessage();
+                }
+
+                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        }, true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Sửa lại logic onBackPressed
+        if(isRedirectFromOtherActivity) {
+            finishAffinity();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

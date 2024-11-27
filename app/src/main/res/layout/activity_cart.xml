@@ -81,37 +81,4 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:gravity="center">
-
-        <ImageButton
-            android:id="@+id/btn_Profile"
-            android:layout_width="20dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="@drawable/ic_profile"
-            android:scaleType="fitCenter" />
-
-        <ImageButton
-            android:id="@+id/btn_Home"
-            android:layout_width="20dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_home"
-            android:scaleType="fitCenter" />
-
-        <ImageButton
-            android:id="@+id/btn_Cart"
-            android:layout_width="20dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_cart"
-            android:scaleType="fitCenter" />
-    </LinearLayout>
-
 </LinearLayout>
