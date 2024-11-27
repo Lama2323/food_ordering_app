@@ -62,7 +62,7 @@ public class CartDetailActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(cartItem.getImage_source())
                 .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_error)
+                .error(R.drawable.ic_placeholder)
                 .into(productImage);
 
         productName.setText(cartItem.getName());
