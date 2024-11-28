@@ -163,13 +163,13 @@ public class ProductActivity extends BaseAuthenticatedActivity {
     }
 
     private void setupSwipeRefresh() {
-        swipeRefreshLayout.setColorSchemeResources(
+        swipeRefreshLayout.setColorSchemeResources( // setup màu sắc của swipe refresh indicator
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light
         );
-        swipeRefreshLayout.setOnRefreshListener(this::loadProducts);
+        swipeRefreshLayout.setOnRefreshListener(this::loadProducts);  //setup func sẽ thực thi khi swipe, ở đây là func loadProducts
     }
 
     private void setupSearch() {

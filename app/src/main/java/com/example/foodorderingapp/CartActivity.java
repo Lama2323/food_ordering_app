@@ -3,6 +3,7 @@ package com.example.foodorderingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.DataQueryBuilder;
 import com.backendless.persistence.local.UserTokenStorageFactory;
 import com.example.foodorderingapp.classes.Cart;
+import com.example.foodorderingapp.classes.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private static final int CART_DETAIL_REQUEST_CODE = 1002;
     private String currentUserId;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView emptyCartText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +52,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         cartRecyclerView = findViewById(R.id.cart_list);
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Initialize SwipeRefreshLayout
+        
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         setupSwipeRefresh();
 
@@ -58,16 +60,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         totalPriceSelectedTextView = findViewById(R.id.total_price_selected);
         checkoutButton = findViewById(R.id.button_checkout);
+        emptyCartText = findViewById(R.id.empty_cart_text);
 
         checkoutButton.setOnClickListener(v -> handleCheckout());
-
-        // String loggedInUser = Backendless.UserService.CurrentUser().getObjectId();
-        // String token = UserTokenStorageFactory.instance().getStorage().get();
-
-        // Toast.makeText(CartActivity.this,"loggedInUser, token: " + loggedInUser + ",
-        // " + token, Toast.LENGTH_SHORT).show();
-        // Log.d("CartActivity", "currentUserId, token: " + loggedInUser + ", " +
-        // token);
 
         calculateTotalPriceSelected();
     }
@@ -84,7 +79,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     private void retrieveCartData() {
         DataQueryBuilder queryBuilder = DataQueryBuilder.create();
-
         String whereClause = "customer_id = '" + currentUserId + "'";
         queryBuilder.setWhereClause(whereClause);
 
@@ -98,8 +92,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 } else {
                     cartAdapter.updateCartList(cartList);
                 }
+
+                emptyCartText.setVisibility(cartList.isEmpty() ? View.VISIBLE : View.GONE);
+                cartRecyclerView.setVisibility(cartList.isEmpty() ? View.GONE : View.VISIBLE);
+
                 calculateTotalPriceSelected();
-                // Hide refresh indicator
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -108,7 +105,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 Toast.makeText(CartActivity.this, "Error retrieving cart data: " + fault.getMessage(),
                         Toast.LENGTH_SHORT).show();
                 Log.e("CartActivity", "Error: " + fault.getMessage());
-                // Hide refresh indicator even if there's an error
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -121,19 +117,54 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             String objectId = cartItemToDelete.getObjectId();
 
             if (objectId != null) {
-                Backendless.Data.of(Cart.class).remove(cartItemToDelete, new AsyncCallback<Long>() {
+
+                DataQueryBuilder queryBuilder = DataQueryBuilder.create();
+                queryBuilder.setWhereClause("name = '" + cartItemToDelete.getName() + "'");
+
+                Backendless.Data.of(Product.class).find(queryBuilder, new AsyncCallback<List<Product>>() {
                     @Override
-                    public void handleResponse(Long response) {
-                        cartList.remove(position);
-                        cartAdapter.notifyItemRemoved(position);
-                        Toast.makeText(CartActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
+                    public void handleResponse(List<Product> response) {
+                        if (response != null && !response.isEmpty()) {
+                            Product product = response.get(0);
+                            product.setQuantity(product.getQuantity() + cartItemToDelete.getQuantity());
+
+                            Backendless.Data.of(Product.class).save(product, new AsyncCallback<Product>() {
+                                @Override
+                                public void handleResponse(Product response) {
+                                    // After product is updated, delete cart item
+                                    Backendless.Data.of(Cart.class).remove(cartItemToDelete, new AsyncCallback<Long>() {
+                                        @Override
+                                        public void handleResponse(Long response) {
+                                            cartList.remove(position);
+                                            cartAdapter.notifyItemRemoved(position);
+                                            calculateTotalPriceSelected();
+                                            Toast.makeText(CartActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void handleFault(BackendlessFault fault) {
+                                            Toast.makeText(CartActivity.this, "Error deleting item: " + fault.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                            Log.e("CartActivity", "Error deleting item: " + fault.getMessage());
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    Toast.makeText(CartActivity.this, "Error updating product: " + fault.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                    Log.e("CartActivity", "Error updating product: " + fault.getMessage());
+                                }
+                            });
+                        }
                     }
 
                     @Override
                     public void handleFault(BackendlessFault fault) {
-                        Toast.makeText(CartActivity.this, "Error deleting item: " + fault.getMessage(),
+                        Toast.makeText(CartActivity.this, "Error fetching product: " + fault.getMessage(),
                                 Toast.LENGTH_SHORT).show();
-                        Log.e("CartActivity", "Error deleting item: " + fault.getMessage());
+                        Log.e("CartActivity", "Error fetching product: " + fault.getMessage());
                     }
                 });
             } else {
@@ -192,7 +223,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 calculateTotalPriceSelected();
             }
         }
-        // Thêm xử lý cho CART_DETAIL_REQUEST_CODE
         else if (requestCode == CART_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
             Cart updatedCartItem = (Cart) data.getSerializableExtra("updatedCartItem");
             if (updatedCartItem != null) {
