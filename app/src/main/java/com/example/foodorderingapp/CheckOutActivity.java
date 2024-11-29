@@ -55,7 +55,7 @@ public class CheckOutActivity extends BaseNetworkActivity {
         deliveryPhoneEditText = findViewById(R.id.delivery_phone_number);
         confirmOrderButton = findViewById(R.id.confirm_order_button);
         totalPriceTextView = findViewById(R.id.total_price_checkout);
-        progressBar = findViewById(R.id.progressBar); // Thêm ProgressBar vào layout
+        progressBar = findViewById(R.id.progressBar);
 
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);

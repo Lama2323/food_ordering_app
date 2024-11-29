@@ -13,7 +13,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         boolean isConnected = NetworkUtils.isNetworkConnected(context);
         if (!isConnected)
         {
-            Toast.makeText(context, "Mất kết nối mạng!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Mất kết nối mạng!, Vui lòng kiểm tra lại kết nối.", Toast.LENGTH_SHORT).show();
             Intent disconnectedIntent = new Intent(context, DisconnectedActivity.class);
             disconnectedIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(disconnectedIntent);

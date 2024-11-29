@@ -25,7 +25,7 @@ public class LoginActivity extends BaseNetworkActivity {
 
     private EditText _txtEmail, _txtPassword;
     private Button _btnLogin, _btnRegister;
-    private TextView _txtResetPassword;
+    private TextView _txtForgetPassword;
     private boolean isRedirectFromOtherActivity;
 
     @Override
@@ -43,7 +43,7 @@ public class LoginActivity extends BaseNetworkActivity {
         _txtPassword = findViewById(R.id.txt_LoginPassword);
         _btnLogin = findViewById(R.id.btn_Login);
         _btnRegister = findViewById(R.id.btn_Register);
-        _txtResetPassword = findViewById(R.id.txt_LoginPassword);
+        _txtForgetPassword = findViewById(R.id.txt_ForgetPassword);
     }
 
     private void setupClickListeners() {
@@ -59,7 +59,7 @@ public class LoginActivity extends BaseNetworkActivity {
 
             // Show loading
             _btnLogin.setEnabled(false);
-            _btnLogin.setText("Đang đăng nhập...");
+            _btnRegister.setEnabled(false);
 
             loginUser(email, password);
         });
@@ -70,8 +70,44 @@ public class LoginActivity extends BaseNetworkActivity {
         });
 
         // Reset password click
-        _txtResetPassword.setOnClickListener(v -> {
-            // Handle reset password
+        _txtForgetPassword.setOnClickListener(v -> {
+            String email = _txtEmail.getText().toString().trim();
+
+            if(email.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Vui lòng nhập email để lấy lại mật khẩu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            _txtForgetPassword.setEnabled(false);
+
+            Backendless.UserService.restorePassword(email, new AsyncCallback<Void>() {
+                @Override
+                public void handleResponse(Void response) {
+                    Toast.makeText(LoginActivity.this,
+                            "Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư.",
+                            Toast.LENGTH_LONG).show();
+                    _txtForgetPassword.setEnabled(true);
+                }
+
+                @Override
+                public void handleFault(BackendlessFault fault) {
+                    String errorMessage = "Không thể gửi email khôi phục: ";
+
+                    switch(fault.getCode()) {
+                        case "3020":
+                            errorMessage += "Email không tồn tại";
+                            break;
+                        case "3000":
+                            errorMessage += "Email không đúng định dạng";
+                            break;
+                        default:
+                            errorMessage += fault.getMessage();
+                    }
+
+                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    _txtForgetPassword.setEnabled(true);
+                }
+            });
         });
     }
 
@@ -88,7 +124,8 @@ public class LoginActivity extends BaseNetworkActivity {
             public void handleFault(BackendlessFault fault) {
                 // Reset button state
                 _btnLogin.setEnabled(true);
-                _btnLogin.setText("Đăng nhập");
+                _btnRegister.setEnabled(true);
+
 
                 // Show error
                 String errorMessage = "Đăng nhập thất bại: ";
@@ -112,7 +149,6 @@ public class LoginActivity extends BaseNetworkActivity {
 
     @Override
     public void onBackPressed() {
-        // Sửa lại logic onBackPressed
         if(isRedirectFromOtherActivity) {
             finishAffinity();
         } else {
