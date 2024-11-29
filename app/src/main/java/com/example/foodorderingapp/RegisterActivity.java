@@ -18,7 +18,7 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseNetworkActivity {
 
     private EditText _txtEmail, _txtPassword, _txtReEnterPassword;
     private Button _btnRegister;

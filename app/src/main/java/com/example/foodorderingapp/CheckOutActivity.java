@@ -24,7 +24,7 @@ import com.example.foodorderingapp.classes.Order;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckOutActivity extends AppCompatActivity {
+public class CheckOutActivity extends BaseNetworkActivity {
     private RecyclerView checkoutRecyclerView;
     private CartAdapter checkoutAdapter;
     private List<Cart> checkoutList;

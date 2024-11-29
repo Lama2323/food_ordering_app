@@ -20,7 +20,7 @@ import com.example.foodorderingapp.classes.Product;
 
 import java.util.List;
 
-public class CartDetailActivity extends AppCompatActivity {
+public class CartDetailActivity extends BaseNetworkActivity {
     private Cart cartItem;
     private Product correspondingProduct;
     private TextView quantityTextView;

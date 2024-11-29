@@ -21,7 +21,7 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.persistence.local.UserIdStorageFactory;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseNetworkActivity {
 
     private EditText _txtEmail, _txtPassword;
     private Button _btnLogin, _btnRegister;
@@ -34,11 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         isRedirectFromOtherActivity = getIntent().getBooleanExtra("fromActivity", false);
-
-        // Init views
         initViews();
         setupClickListeners();
-
     }
 
     private void initViews() {

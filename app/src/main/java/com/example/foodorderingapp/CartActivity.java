@@ -26,7 +26,7 @@ import com.example.foodorderingapp.classes.Product;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CartActivity extends AppCompatActivity implements CartAdapter.OnCartClickListener {
+public class CartActivity extends BaseNetworkActivity implements CartAdapter.OnCartClickListener {
 
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
@@ -52,7 +52,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         cartRecyclerView = findViewById(R.id.cart_list);
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         setupSwipeRefresh();
 

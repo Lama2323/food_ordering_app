@@ -35,7 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseNetworkActivity {
     private static final String TAG = "ProfileActivity";
     private static final int PICK_IMAGE_REQUEST = 1;
 

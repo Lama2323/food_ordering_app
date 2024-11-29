@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProductDetailActivity extends AppCompatActivity {
+public class ProductDetailActivity extends BaseNetworkActivity {
     private ImageView productImage;
     private TextView nameTextView;
     private TextView priceTextView;
