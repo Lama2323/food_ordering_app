@@ -48,6 +48,7 @@ public class ProfileActivity extends BaseNetworkActivity {
     private Button backButton;
     private Button logoutButton;
     private ProgressBar progressBar;
+    private Button changePasswordButton;
 
     // Data
     private String imageSource = null;
@@ -80,12 +81,14 @@ public class ProfileActivity extends BaseNetworkActivity {
         backButton = findViewById(R.id.back_button);
         logoutButton = findViewById(R.id.logout_button);
         progressBar = findViewById(R.id.progressBar);
+        changePasswordButton = findViewById(R.id.change_password_button);
     }
 
     private void setupClickListeners() {
         changeImageButton.setOnClickListener(v -> openImageChooser());
         saveButton.setOnClickListener(v -> saveChanges());
         backButton.setOnClickListener(v -> onBackPressed());
+        changePasswordButton.setOnClickListener(v -> openChangePassword());
         logoutButton.setOnClickListener(v -> logOut());
     }
 
@@ -368,6 +371,16 @@ public class ProfileActivity extends BaseNetworkActivity {
         });
     }
 
+    private void openChangePassword() {
+        if (isImageUploading || isUpdatingProfile) {
+            showError("Đang xử lý, vui lòng đợi...");
+            return;
+        }
+
+        Intent intent = new Intent(this, ChangePasswordActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         if (isImageUploading || isUpdatingProfile) {
@@ -390,6 +403,7 @@ public class ProfileActivity extends BaseNetworkActivity {
         saveButton.setEnabled(!show);
         backButton.setEnabled(!show);
         logoutButton.setEnabled(!show);
+        changePasswordButton.setEnabled(!show);
     }
 
     private void showError(String message) {

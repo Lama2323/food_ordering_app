@@ -348,4 +348,7 @@ public class ProductActivity extends BaseAuthenticatedActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {}
 }
