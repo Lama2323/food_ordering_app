@@ -21,7 +21,7 @@ import com.backendless.exceptions.BackendlessFault;
 public class RegisterActivity extends BaseNetworkActivity {
 
     private EditText _txtEmail, _txtPassword, _txtReEnterPassword;
-    private Button _btnRegister;
+    private Button _btnRegister, _btnBackToLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +33,11 @@ public class RegisterActivity extends BaseNetworkActivity {
         _txtPassword = findViewById(R.id.txt_RegisterPassword);
         _txtReEnterPassword = findViewById(R.id.txt_RegisterReEnterPassword);
         _btnRegister = findViewById(R.id.btn_RegisterUser);
-
-        //Log.v("RegisterActivity", "before check");
+        _btnBackToLogin = findViewById(R.id.btn_BackToLogin);
 
         _btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(_txtEmail.getText().toString().isEmpty() || _txtPassword.getText().toString().isEmpty()
                         || _txtReEnterPassword.getText().toString().isEmpty())
                 {
@@ -75,6 +73,15 @@ public class RegisterActivity extends BaseNetworkActivity {
                         Toast.makeText(RegisterActivity.this,"Mật khẩu nhập không khớp với mật khẩu phía trên", Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
+        });
+
+        // Thêm xử lý sự kiện cho nút Quay lại đăng nhập
+        _btnBackToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Đóng activity hiện tại để quay lại màn hình đăng nhập
+                finish();
             }
         });
 
