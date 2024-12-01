@@ -61,8 +61,8 @@ public class CartDetailActivity extends BaseNetworkActivity {
         // Set data to views
         Glide.with(this)
                 .load(cartItem.getImage_source())
-                .placeholder(R.drawable.ic_placeholder)
-                .error(R.drawable.ic_placeholder)
+                .placeholder(R.drawable.ic_food)
+                .error(R.drawable.ic_food)
                 .into(productImage);
 
         productName.setText(cartItem.getName());

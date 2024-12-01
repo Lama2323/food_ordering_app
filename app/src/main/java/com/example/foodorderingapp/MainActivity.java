@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.backendless.Backendless;
 import com.backendless.BackendlessUser;
 
-public class HomeActivity extends BaseAuthenticatedActivity {
+public class MainActivity extends BaseAuthenticatedActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

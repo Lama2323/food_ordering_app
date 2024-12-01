@@ -6,8 +6,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context=".HomeActivity">
+    android:background="#E31837"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/register_layout"
@@ -36,7 +36,7 @@
             android:text="ĐĂNG KÝ"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#212121"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="32dp"/>
 
         <!-- Register form container -->
@@ -53,7 +53,7 @@
                 android:background="@drawable/edit_text_background"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:hint="Nhập địa chỉ email"
+                android:hint="Nhập email"
                 android:inputType="textEmailAddress"
                 android:textSize="16sp"
                 android:textColorHint="#757575"
@@ -81,32 +81,24 @@
                 android:background="@drawable/edit_text_background"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:hint="Hãy nhập lại mật khẩu"
+                android:hint="Nhập lại mật khẩu"
                 android:inputType="textPassword"
                 android:textSize="16sp"
                 android:textColorHint="#757575"
                 android:textColor="#212121"
                 android:layout_marginBottom="24dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_RegisterUser"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="Đăng ký"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:background="@drawable/primary_button_background"
-                android:textColor="#FFFFFF"
-                android:layout_marginBottom="16dp"/>
+                style="@style/PrimaryButton"
+                android:text="Đăng ký"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_BackToLogin"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="Quay lại đăng nhập"
-                android:textSize="16sp"
-                android:background="@drawable/secondary_button_background"
-                android:textColor="#FFFFFF"/>
+                style="@style/SecondaryButton"
+                android:text="Quay lại đăng nhập"/>
         </LinearLayout>
 
         <!-- Bottom space -->

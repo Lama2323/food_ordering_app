@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="#F2E8A6"
     app:cardElevation="4dp">
 
     <LinearLayout
@@ -24,8 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:text="Pizza"
+            style="@style/NameText"
             android:singleLine="true"
             android:ellipsize="end" />
 
@@ -34,8 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="14sp" />
+            android:text="90.000 đ"
+            style="@style/PriceText" />
 
     </LinearLayout>
 

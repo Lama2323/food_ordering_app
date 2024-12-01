@@ -1,9 +1,7 @@
-<!-- Bọc toàn bộ layout hiện tại trong một FrameLayout -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Layout gốc của bạn -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,7 +11,7 @@
             android:id="@+id/app_bar_checkout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#FD970A"
             android:elevation="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -37,7 +35,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Thanh toán"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -58,38 +56,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:text="Tổng tiền "
-            android:textAlignment="textEnd"  />
+            android:textAlignment="textEnd"
+            style="@style/PriceText" />
 
         <EditText
             android:id="@+id/delivery_phone_number"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/AppEditText"
             android:hint="Số điện thoại"
-            android:padding="16dp"
-            android:inputType="phone" /> <!-- Sửa lại inputType thành phone -->
+            android:inputType="phone" />
 
         <EditText
             android:id="@+id/delivery_address"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/AppEditText"
             android:hint="Địa chỉ giao hàng"
-            android:padding="16dp"
             android:inputType="textMultiLine" />
 
         <Button
             android:id="@+id/confirm_order_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Xác nhận"
-            android:layout_margin="16dp" />
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="16dp"
+            style="@style/PrimaryButton"
+            android:text="Xác nhận" />
 
     </LinearLayout>
 
-    <!-- ProgressBar được đặt phía trên cùng, ở giữa màn hình -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

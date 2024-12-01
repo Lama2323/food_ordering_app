@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#F2E8A6">
 
     <ImageButton
         android:id="@+id/button_back"
@@ -14,43 +14,33 @@
 
     <ImageView
         android:id="@+id/product_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp" />
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/product_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:textSize="20sp"
+        android:layout_margin="16dp"
+        android:textSize="24sp"
         android:text="Pizza"
-        android:textStyle="bold" />
+        style="@style/NameText" />
 
     <TextView
         android:id="@+id/product_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:text="90000"
-        android:textSize="18sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="28dp"
-        android:text="Số lượng"
-        android:textSize="18sp" />
+        android:layout_marginHorizontal="16dp"
+        android:textSize="20sp"
+        android:text="90.000 đ"
+        style="@style/PriceText" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <ImageButton
@@ -83,10 +73,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="4dp"
         android:textSize="20sp"
         android:text="Tổng tiền: 90000"
-        android:textStyle="bold" />
+        android:layout_marginHorizontal="16dp"
+        style="@style/PriceText"/>
 
     <Button
         android:id="@+id/button_ok"
@@ -94,6 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
+        style="@style/PrimaryButton"
         android:text="OK" />
 
 </LinearLayout>

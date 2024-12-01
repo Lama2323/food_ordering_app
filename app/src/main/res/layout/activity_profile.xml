@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
     android:id="@+id/main"
+    android:background="#E31837"
     tools:context=".ProfileActivity">
 
     <LinearLayout
@@ -33,12 +34,12 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Button chọn ảnh -->
         <Button
             android:id="@+id/change_image_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Thay Đổi Ảnh"
+            style="@style/SecondaryButton"
             android:layout_marginBottom="24dp" />
 
         <TextView
@@ -47,38 +48,36 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:text="user name"
-            android:textSize="21sp"
-            android:textStyle="bold" />
+            style="@style/NameText" />
 
         <EditText
             android:id="@+id/edit_name_input"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Hãy nhập tên mới"
-            android:layout_marginBottom="16dp" />
+            style="@style/AppEditText"
+            android:hint="Hãy nhập tên mới" />
 
         <Button
             android:id="@+id/save_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SecondaryButton"
             android:text="Lưu Thay Đổi" />
 
         <Button
             android:id="@+id/back_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SecondaryButton"
             android:text="Quay Lại" />
 
         <Button
             android:id="@+id/change_password_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SecondaryButton"
             android:text="Đổi mật khẩu" />
 
         <Button
             android:id="@+id/logout_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SecondaryButton"
             android:text="Đăng xuất" />
     </LinearLayout>
 </ScrollView>

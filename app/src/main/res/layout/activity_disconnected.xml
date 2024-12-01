@@ -4,20 +4,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#E31837">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/ic_disconnect"
+        android:scaleType="fitCenter"
+        android:tint="@android:color/white"/>
 
     <TextView
         android:id="@+id/tv_no_connection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Không có kết nối Internet, thử lại sau."
-        android:textColor="@color/black"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         android:textSize="18sp" />
 
     <Button
         android:id="@+id/btn_retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Retry"
+        android:text="THỬ LẠI"
+        style="@style/PrimaryButton"
         android:layout_marginTop="16dp"/>
 </LinearLayout>

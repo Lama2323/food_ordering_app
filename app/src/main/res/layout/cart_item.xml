@@ -3,16 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
+    android:padding="8dp"
+    android:layout_marginVertical="4dp"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="@drawable/rounded_background_8dp">
 
     <CheckBox
         android:id="@+id/check_box_cart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:theme="@style/BlackCheckBox"/>
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/product_image_view"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -20,6 +23,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_food"
+        app:shapeAppearanceOverlay="@style/RoundedCorner8dp"
         android:contentDescription="Product image" />
 
     <LinearLayout
@@ -32,11 +36,11 @@
             android:id="@+id/product_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
+            style="@style/NameText"
             android:text="pizza"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="4dp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/quantity"
@@ -50,9 +54,8 @@
             android:id="@+id/total"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Tổng tiền: 90000"
-            android:textColor="@android:color/holo_red_dark" />
+            style="@style/PriceText"
+            android:text="Tổng tiền: 90000" />
 
     </LinearLayout>
 
