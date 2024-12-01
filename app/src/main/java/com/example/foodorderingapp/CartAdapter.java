@@ -1,9 +1,12 @@
 package com.example.foodorderingapp;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -11,6 +14,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
 import com.example.foodorderingapp.classes.Cart;
@@ -72,7 +77,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         // Set click listener for delete button
         holder.deleteButton.setOnClickListener(v -> {
             if (listener != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                listener.onDeleteClick(holder.getAdapterPosition());
+                showDeleteConfirmationDialog(holder.getAdapterPosition());
             }
         });
 
@@ -99,6 +104,33 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void updateCartList(List<Cart> newCartList) {
         this.cartList = newCartList;
         notifyDataSetChanged();
+    }
+
+    private void showDeleteConfirmationDialog(int position) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.CustomAlertDialog)
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có muốn xóa khỏi giỏ hàng?")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    if (listener != null) {
+                        listener.onDeleteClick(position);
+                    }
+                })
+                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_bg);
+
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(dialog.getWindow().getAttributes());
+            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.85);
+            dialog.getWindow().setAttributes(layoutParams);
+        }
+
+        dialog.show();
     }
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {

@@ -58,6 +58,7 @@
                 android:textSize="16sp"
                 android:textColorHint="#757575"
                 android:textColor="#212121"
+                android:drawableStart="@drawable/ic_email"
                 android:layout_marginBottom="16dp"/>
 
             <EditText
@@ -71,6 +72,7 @@
                 android:inputType="textPassword"
                 android:textSize="16sp"
                 android:textColorHint="#757575"
+                android:drawableStart="@drawable/ic_password"
                 android:textColor="#212121"
                 android:layout_marginBottom="24dp"/>
 

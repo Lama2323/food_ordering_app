@@ -65,6 +65,7 @@
             android:layout_width="match_parent"
             style="@style/AppEditText"
             android:hint="Số điện thoại"
+            android:drawableStart="@drawable/ic_phone"
             android:inputType="phone" />
 
         <EditText
@@ -72,6 +73,7 @@
             android:layout_width="match_parent"
             style="@style/AppEditText"
             android:hint="Địa chỉ giao hàng"
+            android:drawableStart="@drawable/ic_map"
             android:inputType="textMultiLine" />
 
         <Button
