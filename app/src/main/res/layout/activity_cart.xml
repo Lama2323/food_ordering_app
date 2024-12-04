@@ -51,12 +51,12 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#E31837">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cart_list"
                 android:layout_width="match_parent"
-                android:background="#E31837"
                 android:layout_height="match_parent"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
@@ -67,9 +67,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textColor="@color/white"
                 android:text="Không có sản phẩm trong giỏ hàng"
                 android:textSize="16sp"
-                android:visibility="gone"/>
+                android:visibility="invisible"/>
 
         </FrameLayout>
 
