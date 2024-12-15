@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FoodOrderingApp</string>
+    <string-array name="payment_methods">
+        <item>Tiền mặt</item>
+        <item>Chuyển khoản</item>
+    </string-array>
 </resources>

@@ -12,13 +12,15 @@ public class Order implements Serializable {
     private String food_list;  // JSON string
     private String phone_number;
     private int total;
+    private int payment_method;
 
     public Order() {}
 
-    public Order(String address, List<Cart> cartItems, String phone_number, int total) {
+    public Order(String address, List<Cart> cartItems, String phone_number, int total, int payment_method) {
         this.address = address;
         this.phone_number = phone_number;
         this.total = total;
+        this.payment_method = payment_method;
         setFoodListFromCart(cartItems);
     }
 
@@ -78,5 +80,13 @@ public class Order implements Serializable {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public int getPayment_method() {
+        return payment_method;
+    }
+
+    public void setPayment_method(int payment_method) {
+        this.payment_method = payment_method;
     }
 }

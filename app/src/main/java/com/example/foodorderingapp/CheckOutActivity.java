@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +36,8 @@ public class CheckOutActivity extends BaseNetworkActivity {
     private TextView totalPriceTextView;
     private Button confirmOrderButton;
     private ProgressBar progressBar;
+    private Spinner paymentMethodSpinner;
+    private int selectedPaymentMethod = 1; // Giá trị mặc định là 1 (Tiền mặt)
     private static final String TAG = "CheckOutActivity";
     private boolean isProcessingOrder = false;
     private int totalPrice;
@@ -45,6 +50,7 @@ public class CheckOutActivity extends BaseNetworkActivity {
         initializeViews();
         setupRecyclerView();
         loadCheckoutData();
+        setupPaymentMethodSpinner();
         setupListeners();
     }
 
@@ -56,6 +62,7 @@ public class CheckOutActivity extends BaseNetworkActivity {
         confirmOrderButton = findViewById(R.id.confirm_order_button);
         totalPriceTextView = findViewById(R.id.total_price_checkout);
         progressBar = findViewById(R.id.progressBar);
+        paymentMethodSpinner = findViewById(R.id.payment_method_spinner);
 
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
@@ -80,6 +87,26 @@ public class CheckOutActivity extends BaseNetworkActivity {
             Toast.makeText(this, "Không có sản phẩm trong giỏ hàng", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private void setupPaymentMethodSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.payment_methods, R.layout.custom_spinner_item);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+        paymentMethodSpinner.setAdapter(adapter);
+
+        paymentMethodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Lấy vị trí của item được chọn và cộng 1 để map với giá trị 1 và 2
+                selectedPaymentMethod = position + 1;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedPaymentMethod = 1; // Mặc định là tiền mặt
+            }
+        });
     }
 
     private void setupListeners() {
@@ -129,8 +156,8 @@ public class CheckOutActivity extends BaseNetworkActivity {
         isProcessingOrder = true;
         showLoadingState(true);
 
-        // Tạo đối tượng Order mới
-        Order order = new Order(address, checkoutList, phone, totalPrice);
+        // Tạo đối tượng Order mới với phương thức thanh toán
+        Order order = new Order(address, checkoutList, phone, totalPrice, selectedPaymentMethod);
 
         // Bước 1: Lưu Order
         Backendless.Data.of(Order.class).save(order, new AsyncCallback<Order>() {
@@ -148,7 +175,6 @@ public class CheckOutActivity extends BaseNetworkActivity {
             }
         });
     }
-
     private void deleteCartItems() {
         // Tạo danh sách objectId của các cart items cần xóa
         ArrayList<String> objectIds = new ArrayList<>();
