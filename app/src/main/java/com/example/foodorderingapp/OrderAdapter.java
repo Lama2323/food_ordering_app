@@ -55,7 +55,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 Date createdDate = response.getCreated();
                 holder.tvCreatedDate.setText(formatter.format(createdDate));
 
-                boolean isDone = response.is_done(); // Assuming is_done is a boolean field
+                boolean isDone = response.getIs_done(); // Assuming is_done is a boolean field
                 holder.tvStatus.setText(isDone ? "Đã giao" : "Chưa giao");
                 holder.tvStatus.setTextColor(isDone ? ContextCompat.getColor(context, R.color.green) : ContextCompat.getColor(context, R.color.red));
             }

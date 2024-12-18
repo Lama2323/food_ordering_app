@@ -106,7 +106,7 @@ public class Order implements Serializable {
         this.created = created;
     }
 
-    public boolean is_done() {
+    public boolean getIs_done() {
         return is_done;
     }
 
