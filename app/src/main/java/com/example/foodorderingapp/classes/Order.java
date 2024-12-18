@@ -1,6 +1,10 @@
 package com.example.foodorderingapp.classes;
 
+import com.backendless.Backendless;
+import com.backendless.BackendlessUser;
+
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +17,9 @@ public class Order implements Serializable {
     private String phone_number;
     private int total;
     private int payment_method;
+    private Date created;
+    private boolean is_done;
+    private BackendlessUser owner;
 
     public Order() {}
 
@@ -31,6 +38,7 @@ public class Order implements Serializable {
                 JSONObject foodItem = new JSONObject();
                 foodItem.put("name", item.getName());
                 foodItem.put("quantity", item.getQuantity());
+                foodItem.put("price", item.getPrice());
                 foodArray.put(foodItem);
             }
             this.food_list = foodArray.toString();
@@ -88,5 +96,29 @@ public class Order implements Serializable {
 
     public void setPayment_method(int payment_method) {
         this.payment_method = payment_method;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public boolean is_done() {
+        return is_done;
+    }
+
+    public void setIs_done(boolean is_done) {
+        this.is_done = is_done;
+    }
+
+    public BackendlessUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(BackendlessUser owner) {
+        this.owner = owner;
     }
 }

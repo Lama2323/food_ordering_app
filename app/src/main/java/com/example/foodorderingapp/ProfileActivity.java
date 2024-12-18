@@ -1,5 +1,7 @@
 package com.example.foodorderingapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,6 +32,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+
 import android.graphics.drawable.Drawable;
 
 import java.io.ByteArrayOutputStream;
@@ -41,14 +45,14 @@ public class ProfileActivity extends BaseNetworkActivity {
 
     // UI Components
     private ImageView profileImage;
-    private TextView usernameTextView;
-    private EditText editNameInput;
+    private TextView titleProfile;
     private Button changeImageButton;
-    private Button saveButton;
-    private Button backButton;
+    private ImageButton backButton, buttonEdit;
     private Button logoutButton;
+    private Button favoriteButton;
     private ProgressBar progressBar;
     private Button changePasswordButton;
+    private Button orderButton;
 
     // Data
     private String imageSource = null;
@@ -74,22 +78,31 @@ public class ProfileActivity extends BaseNetworkActivity {
 
     private void initializeViews() {
         profileImage = findViewById(R.id.profile_image);
-        usernameTextView = findViewById(R.id.username_text);
-        editNameInput = findViewById(R.id.edit_name_input);
+        titleProfile = findViewById(R.id.title_profile);
         changeImageButton = findViewById(R.id.change_image_button);
-        saveButton = findViewById(R.id.save_button);
-        backButton = findViewById(R.id.back_button);
+        backButton = findViewById(R.id.button_back);
+        buttonEdit = findViewById(R.id.button_edit);
         logoutButton = findViewById(R.id.logout_button);
+        favoriteButton = findViewById(R.id.favorite_button);
         progressBar = findViewById(R.id.progressBar);
+        orderButton = findViewById(R.id.order_button);
         changePasswordButton = findViewById(R.id.change_password_button);
     }
 
     private void setupClickListeners() {
+        profileImage.setOnClickListener(v -> openImageChooser());
         changeImageButton.setOnClickListener(v -> openImageChooser());
-        saveButton.setOnClickListener(v -> saveChanges());
         backButton.setOnClickListener(v -> onBackPressed());
+        buttonEdit.setOnClickListener(v -> showEditNameDialog());
+        favoriteButton.setOnClickListener(v -> openFavoriteActivity());
+        orderButton.setOnClickListener(v -> openOrderActivity());
         changePasswordButton.setOnClickListener(v -> openChangePassword());
         logoutButton.setOnClickListener(v -> logOut());
+    }
+
+    private void openOrderActivity() {
+        Intent intent = new Intent(this, OrderActivity.class);
+        startActivity(intent);
     }
 
     private void loadUserProfile() {
@@ -125,7 +138,7 @@ public class ProfileActivity extends BaseNetworkActivity {
         String name = (String) user.getProperty("name");
         String image = (String) user.getProperty("image_source");
 
-        usernameTextView.setText(name != null ? name : "No Name");
+        titleProfile.setText(name != null ? name : "No Name");
 
         if (image != null && !image.isEmpty()) {
             loadProfileImage(image);
@@ -272,7 +285,7 @@ public class ProfileActivity extends BaseNetworkActivity {
         Backendless.UserService.findById(userId, new AsyncCallback<BackendlessUser>() {
             @Override
             public void handleResponse(BackendlessUser user) {
-                if (newName != null && !newName.isEmpty()) {
+                if (newName != null) {
                     user.setProperty("name", newName);
                 }
                 if (imageSource != null) {
@@ -288,7 +301,7 @@ public class ProfileActivity extends BaseNetworkActivity {
                             hasProfileChanged = true;
 
                             if (newName != null) {
-                                usernameTextView.setText(newName);
+                                titleProfile.setText(newName);
                                 showMessage("Cập nhật thông tin thành công!");
                             } else {
                                 showMessage("Cập nhật ảnh thành công!");
@@ -320,26 +333,31 @@ public class ProfileActivity extends BaseNetworkActivity {
         });
     }
 
-    private void saveChanges() {
-        if (isImageUploading || isUpdatingProfile) {
-            showError("Đang xử lý, vui lòng đợi...");
-            return;
-        }
+    private void showEditNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        View view = getLayoutInflater().inflate(R.layout.dialog_edit_name, null);
+        final EditText inputName = view.findViewById(R.id.edit_name_input);
+        inputName.setText(titleProfile.getText());
 
-        String newName = editNameInput.getText().toString().trim();
-        String currentName = usernameTextView.getText().toString();
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
 
-        if (newName.isEmpty()) {
-            showError("Tên không được để trống!");
-            return;
-        }
+        Button buttonOK = view.findViewById(R.id.button_ok);
+        Button buttonCancel = view.findViewById(R.id.button_cancel);
 
-        if (newName.equals(currentName) && imageSource == null) {
-            showError("Bạn chưa thực hiện thay đổi nào!");
-            return;
-        }
+        buttonOK.setOnClickListener(v -> {
+            String newName = inputName.getText().toString().trim();
+            if (!newName.isEmpty()) {
+                updateUserProfile(newName);
+                dialog.dismiss();
+            } else {
+                showError("Tên không được để trống!");
+            }
+        });
 
-        updateUserProfile(newName);
+        buttonCancel.setOnClickListener(v -> dialog.cancel());
+
+        dialog.show();
     }
 
     private void logOut() {
@@ -389,6 +407,16 @@ public class ProfileActivity extends BaseNetworkActivity {
         navigateBack();
     }
 
+    private void openFavoriteActivity() {
+        if (isImageUploading || isUpdatingProfile) {
+            showError("Đang xử lý, vui lòng đợi...");
+            return;
+        }
+
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+    }
+
     private String getCurrentUserId() {
         return UserIdStorageFactory.instance().getStorage().get();
     }
@@ -399,10 +427,11 @@ public class ProfileActivity extends BaseNetworkActivity {
         }
 
         changeImageButton.setEnabled(!show);
-        saveButton.setEnabled(!show);
         backButton.setEnabled(!show);
         logoutButton.setEnabled(!show);
         changePasswordButton.setEnabled(!show);
+        favoriteButton.setEnabled(!show);
+        buttonEdit.setEnabled(!show);
     }
 
     private void showError(String message) {

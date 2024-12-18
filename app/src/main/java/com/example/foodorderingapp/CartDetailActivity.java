@@ -48,7 +48,6 @@ public class CartDetailActivity extends BaseNetworkActivity {
         fetchCorrespondingProduct();
 
         // Initialize views
-        ImageButton backButton = findViewById(R.id.button_back);
         ImageView productImage = findViewById(R.id.product_image);
         TextView productName = findViewById(R.id.product_name);
         TextView productPrice = findViewById(R.id.product_price);
@@ -68,9 +67,6 @@ public class CartDetailActivity extends BaseNetworkActivity {
         productName.setText(cartItem.getName());
         productPrice.setText("Giá: " + cartItem.getPrice());
         updateQuantityAndTotal();
-
-        // Set click listeners
-        backButton.setOnClickListener(v -> finish());
 
         decreaseButton.setOnClickListener(v -> {
             if (currentQuantity > 1) {
