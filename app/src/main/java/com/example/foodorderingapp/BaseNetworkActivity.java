@@ -29,7 +29,6 @@ public abstract class BaseNetworkActivity extends AppCompatActivity {
     protected void navigateToDisconnected() {
         Intent intent = new Intent(this, DisconnectedActivity.class);
         startActivity(intent);
-        finish();
     }
 
     @Override
